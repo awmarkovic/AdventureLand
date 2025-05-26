@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      if (catHealthPoints <= 0 && slimeHealthPoints > 0) {
+        alert("Cat is dead and cannot beat Slime. YOU LOSE!");
+        return;
+      }
+
+      ELLER;
+
+      if (
+        currentMonster === "Slime" &&
+        catHealthPoints <= 0 &&
+        slimeHealthPoints > 0
+      ) {
+        alert(
+          "The Cat is dead and cannot beat Slime. <br> There is nothing more you can do. YOU LOSE!"
+        );
+        return;
+      }
+
+      if (juliaHealthPoints <= 0 && batHealthPoints > 0) {
+        alert("Julia the archer is dead and cannot beat Bat. YOU LOSE!");
+        return;
+      }
+
+      ELLER;
+
+      if (
+        currentMonster === "Bat" &&
+        juliaHealthPoints <= 0 &&
+        batHealthPoints > 0
+      ) {
+        alert(
+          "Julia the archer is dead and cannot beat Bat. <br> There is nothing more you can do. YOU LOSE!"
+        );
+        return;
+      }
+
+      const alive = [
+        knightHealthPoints,
+        juliaHealthPoints,
+        catHealthPoints,
+      ].filter(function (warriorHp) {
+        return warriorHp >= 0;
+      });
+
+      let aliveWarriors = [];
+      if (juliaHealthPoints >= 0) aliveWarriors.push(julia);
+      if (knightHealthPoints >= 0) aliveWarriors.push(knight);
+      if (catHealthPoints >= 0) aliveWarriors.push(cat);
+    </script>
+  </body>
+</html>

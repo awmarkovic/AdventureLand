@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AdventureLand - Final Boss Battle</title>
+    <!-- Du trenger ikke gjøre noe med CSS-koden! -->
+    <link rel="stylesheet" href="css-skal-ikke-roeres/index.css" />
+  </head>
+  <body>
+    <div id="container">
+      <!-- Life bars -->
+      <div class="life-bar-container knight-container">
+        <img src="images/knight-head.png" />
+        <div class="life-bar" id="nameless-knight-hp-div"></div>
+        <!-- hp (Health Points) til ridderen -->
+      </div>
+
+      <div class="life-bar-container julia-container">
+        <img src="images/julia-head.png" />
+        <div class="life-bar" id="julia-the-archer-hp-div"></div>
+        <!-- hp (Health Points) til Julia -->
+      </div>
+
+      <div class="life-bar-container cat-container">
+        <img src="images/cat-head.png" alt="" />
+        <div class="life-bar" id="the-cat-hp-div"></div>
+        <!-- hp (Health Points) til katten -->
+      </div>
+
+      <div class="life-bar-container big-boss-container">
+        <img src="images/big-boss-head.png" alt="" />
+        <div class="life-bar" id="big-boss-hp-div"></div>
+        <!-- hp (Health Points) til Big boss -->
+      </div>
+
+      <!-- The knight -->
+      <img id="nameless-knight" src="images/knight.png" alt="" />
+
+      <!-- Julia the archer -->
+      <img id="julia-the-archer" src="images/julia-the-archer.png" />
+
+      <!-- The Cat -->
+      <img id="the-cat" src="images/cat.png" alt="" />
+
+      <!-- William the healer -->
+      <img id="william-the-healer" src="images/healer.png" />
+
+      <!-- Jack the lumberjack -->
+      <img id="jack-the-lumberjack" src="images/lumberjack.png" alt="" />
+
+      <!-- The big evil boss -->
+      <img id="big-boss" src="images/big-boss.png" alt="" />
+
+      <!-- Noen ganger dukker et monster opp her -->
+      <img id="appearing-monster" src="" alt=" " />
+    </div>
+    <!-- end container-->
+
+    <!-- Her skrives det ut informasjon om hva brukeren gjør og hva som skjer. -->
+    <div id="output-div"></div>
+    <script>
+      // Ekstraoppgavene jeg har gjort er litt spredt!
+      // Det er kommentert hvor de er brukt slik at det ikke er noen tvil
+      // Disse er de jeg har tatt med i min kode:
+      // 1. Bruk element.style-teknikken for å stilsette meldingene som skrives ut.
+      // 2. Det skal dukke opp «Du vant!» hvis man vinner over Big Boss
+      // 3. Det skal dukke opp «Du tapte!»-melding hvis man taper
+      // 4. - Gjør bruk av setTimeout
+
+      // Jeg fikk tilbakemelding på at koden min trengte mer kommentarer. Mulig det ble
+      // en smule for mye. Men det var visst litt nødvendig da vi er flere som er ferske i js-gamet
+
+      // Charachters (only the ones i use therefore no Healer or Lumberjack)
+      var knight = document.getElementById("nameless-knight");
+      var julia = document.getElementById("julia-the-archer");
+      var cat = document.getElementById("the-cat");
+      var bigBoss = document.getElementById("big-boss");
+      var appearingMonster = document.getElementById("appearing-monster");
+
+      // Lifebars
+      var knightHpBar = document.getElementById("nameless-knight-hp-div");
+      var juliaHpBar = document.getElementById("julia-the-archer-hp-div");
+      var catHpBar = document.getElementById("the-cat-hp-div");
+      var bigBossHpBar = document.getElementById("big-boss-hp-div");
+
+      // Attack variables
+      let knightAttack = 0;
+      let juliaAttack = 0;
+      let bigBossAttack = 0;
+      let catAttack = 0;
+
+      // Health per chatacter
+      let bigBossHealthPoints = 300;
+      let knightHealthPoints = 200;
+      let juliaHealthPoints = 200;
+      let catHealthPoints = 200;
+
+      var victory = false;
+
+      // OUTPUT
+      var output = document.getElementById("output-div");
+      // Extra task! Use element.style to change text-color:
+      output.style.color = "lightpink";
+      output.style.backgroundColor = "black";
+
+      //This fucntion gives random damage between 1 and 50
+      function getRandomDamage() {
+        var damage = Math.floor(Math.random() * 30) + 1;
+        return damage;
+      }
+
+      // This function is made specifically for Cat and Julia since
+      // they give less damage on BigBoss
+      function getLittleDamage() {
+        var damage = Math.floor(Math.random() * 3) + 1;
+        return damage;
+      }
+
+      // This function gives a random number between 0 and 2.
+      // This is to access their array position
+      function getRandomWarrior() {
+        var randomIndex = Math.floor(Math.random() * 3);
+        return randomIndex;
+      }
+
+      // This function makes the game "stop" when BigBoss is defeated.
+      function setVictory() {
+        setTimeout(function () {
+          victory = true;
+          bigBossHpBar.style.width = "0";
+          //Extra task: alert when big boss is defeated!
+          alert("BigBoss is defeated!!! YOU WIN!");
+          output.innerHTML = `BigBoss is defeated!! YOU WIN! <br>`;
+          bigBoss.style.display = "none";
+        }, 1000);
+      }
+
+      // KNIGHT ATTACK
+      function knightAttacks() {
+        // This "if" is connected to my setVictory-function and
+        // alerts that if big boss is defeated - the function should
+        // return (stop!). I implemented this to stop the game when
+        // BigBoss is defeated
+        if (victory) {
+          return;
+        }
+
+        // This "if" lets you know that if you click on the knight,
+        // and he is already dead. Then the function should stop
+        if (knightHealthPoints <= 0) {
+          output.innerHTML = `The Knight is already dead.<br>`;
+          return;
+        }
+
+        // This "is" says that if there is NOT a monster present
+        // Then the knight is allowed to do damage on BigBoss.
+        // If there is a monster present, they are not allowed to damage
+        // BigBoss!
+        if (!currentMonster) {
+          knightAttack = getRandomDamage();
+          bigBossHealthPoints -= knightAttack;
+          bigBossHpBar.style.width = `${bigBossHealthPoints}px`;
+          output.innerHTML = `The Knight dealt ${knightAttack}hp in damage to BigBoss! <br>`;
+        }
+
+        // This "if" says that if BibBoss has no more hp left
+        // Then you should be alerted that you have won.
+        // Else, boss continues attacking as per usual
+        if (bigBossHealthPoints <= 0) {
+          bigBoss.style.display = "none";
+          setVictory();
+        } else {
+          bossAttacks();
+        }
+
+        // This "if" says that if there is a monster present, you
+        // get notice that they must be defeated before you can
+        // attack BigBoss.
+        // If not monster present: then there should continue being
+        // a 25% chance of it appearing
+        if (currentMonster) {
+          output.innerHTML = `${currentMonster} must be defeated before attacking BigBoss! <br>`;
+          return;
+        } else {
+          givesRandomMonster();
+        }
+      }
+
+      knight.onclick = knightAttacks;
+
+      // JULIA ATTACK on Bat
+      function juliaAttacks() {
+        if (victory) {
+          return;
+        }
+        if (juliaHealthPoints <= 0) {
+          output.innerHTML = `Julia the archer is already dead.<br>`;
+          return;
+        }
+
+        if (!currentMonster) {
+          juliaAttack = getLittleDamage();
+          bigBossHealthPoints -= juliaAttack;
+          bigBossHpBar.style.width = `${bigBossHealthPoints}px`;
+          output.innerHTML = `Julia dealt ${juliaAttack}hp in damage to BigBoss! <br>`;
+        }
+
+        if (bigBossHealthPoints <= 0) {
+          setVictory();
+        } else {
+          // Big Boss counter-attacks one of the characters randomly
+          bossAttacks();
+        }
+
+        // This "if" states that if the monster that has appeared
+        // is the Bat, julia can attack it. If the monster has 0 hp,
+        // you should be noticed that Julia defeated the Bat.
+        // Else: if monster is Slime, you should be noticed that
+        // Julia cannot attack Slime
+        // Else (if there is no monster - back to givesRandomMonster function)
+        if (currentMonster === "Bat") {
+          juliaAttack = getRandomDamage();
+          batHealthPoints -= juliaAttack;
+          output.innerHTML = `Julia the archer dealt ${juliaAttack}hp in damage to Bat <br>`;
+
+          if (batHealthPoints <= 0) {
+            output.innerHTML = `Julia the archer defeated Bat! <br>`;
+            currentMonster = null; // Slime is defeated. No more monster present.
+            appearingMonster.style.display = "none";
+          }
+        } else if (currentMonster === "Slime") {
+          output.innerHTML = `Julia the archer cannot attack Slime!<br>`;
+        } else {
+          givesRandomMonster();
+        }
+      }
+
+      julia.onclick = juliaAttacks;
+
+      // CAT ATTACK - on Slime
+      // I have commented on juliaAttack, and it is basically the same code
+      // as for catAttacks (just flipped on the monsters).
+      // See juliaAttacks for comments regarding catAttacks as well :)
+
+      function catAttacks() {
+        if (victory) {
+          return;
+        }
+        if (catHealthPoints <= 0) {
+          output.innerHTML = `The Cat is already dead.<br>`;
+          return;
+        }
+
+        if (!currentMonster) {
+          catAttack = getLittleDamage();
+          bigBossHealthPoints -= catAttack;
+          bigBossHpBar.style.width = `${bigBossHealthPoints}px`;
+          output.innerHTML = `The Cat dealt ${catAttack}hp in damage to BigBoss! <br>`;
+        }
+
+        if (bigBossHealthPoints <= 0) {
+          setVictory();
+        } else {
+          // Big Boss counter-attacks one of the characters randomly
+          bossAttacks();
+        }
+
+        if (currentMonster === "Slime") {
+          catAttack = getRandomDamage();
+          slimeHealthPoints -= catAttack;
+          output.innerHTML = `The Cat dealt ${catAttack}hp in damage to Slime <br>`;
+
+          if (slimeHealthPoints <= 0) {
+            output.innerHTML = `The Cat defeated Slime! <br>`;
+            currentMonster = null; // Slime is defeated. No more monster present.
+            appearingMonster.style.display = "none";
+          }
+        } else if (currentMonster === "Bat") {
+          output.innerHTML = `The Cat cannot attack Bat!<br>`;
+        } else {
+          givesRandomMonster();
+        }
+      }
+
+      cat.onclick = catAttacks;
+
+      //
+      //
+      // BIGBOSS ATTACK
+      function bossAttacks() {
+        // Extra task: set timeout function to delay attacks from monsters
+        setTimeout(function () {
+          var damageGiven = getRandomDamage();
+          var warriorNames = ["Knight", "Julia", "Cat"];
+          var randomWarrior = getRandomWarrior();
+          var selectedWarrior = warriorNames[randomWarrior];
+
+          var targetHealthBars = [knightHpBar, juliaHpBar, catHpBar];
+          var selectedHealthBar = targetHealthBars[randomWarrior];
+
+          var healthBeforeAttack = selectedHealthBar.offsetWidth;
+          var healthAfterAttack = healthBeforeAttack - damageGiven;
+          // ^ Whats happening here is that i made a variable that uses the function
+          // getRandomRamage to get a random damage to give to the warriors. Then I made
+          // a variable that uses getRandomWarrior to get a random warrior to damage.
+          // I made a variable to select the health-bar for the same warrior selected
+          // to be damages. This is so the correct hp decreases.
+          // Then I say that hp after an attack should be hp before attack minus the
+          // damage that was given
+
+          selectedHealthBar.style.width = `${healthAfterAttack}px`;
+          // ^ The selected warriors hp-bar changes width (px) after the variable healthAfterAttack
+
+          // If attack is for The Knight
+          if (selectedWarrior === "Knight") {
+            knightHealthPoints -= damageGiven;
+            output.innerHTML += `Big Boss struck back! <br>
+            The Knight lost ${damageGiven}hp! <br>`;
+            knightHpBar.style.width = `${knightHealthPoints}px`;
+
+            if (knightHealthPoints <= 0) {
+              knightHpBar.style.opacity = 0;
+              knight.style.display = "none";
+              output.innerHTML = `The Knight has fallen.. <br>`;
+            }
+            // Here i say that if the warrior that was selected is Knight, then
+            //  he loses the random chosen damage to his hp. Also, his hp-bar is decresed
+            // the same amount px width. You get noticed how much he lost and that the Boss stricked back
+            // Then it says that if his hp is 0, u are noticed that he had died.
+            // Nb: same for julia and cat
+
+            // If attack is for Julia
+          } else if (selectedWarrior === "Julia") {
+            juliaHealthPoints -= damageGiven;
+            output.innerHTML += `Big Boss struck back! <br>
+            Julia lost ${damageGiven}hp! <br>`;
+            juliaHpBar.style.width = `${juliaHealthPoints}px`;
+
+            if (juliaHealthPoints <= 0) {
+              juliaHpBar.style.opacity = 0;
+              julia.style.display = "none";
+              output.innerHTML = `Julia has fallen.. <br>`;
+            }
+
+            // If attack is for The Cat
+          } else if (selectedWarrior === "Cat") {
+            catHealthPoints -= damageGiven;
+            output.innerHTML += `Big Boss struck back! <br>
+              The Cat lost ${damageGiven}hp! <br>`;
+            catHpBar.style.width = `${catHealthPoints}px`;
+
+            if (catHealthPoints <= 0) {
+              catHpBar.style.opacity = 0;
+              cat.style.display = "none";
+              output.innerHTML = `The Cat has fallen.. <br>`;
+            }
+          }
+
+          // Extra-task!
+          // This "if" says that if all of the warriors hp is 0
+          // You should be alerted and noticed that you lose
+          if (
+            knightHealthPoints <= 0 &&
+            juliaHealthPoints <= 0 &&
+            catHealthPoints <= 0
+          ) {
+            output.innerHTML = `Your warriors have all been defeated. YOU LOSE!! <br>`;
+            alert("Your warriors have all been defeated. YOU LOSE!!");
+            return;
+          }
+        }, 1000);
+      }
+
+      // Monster-section
+      var slimeHealthPoints = 5; //Slime starts with 5 hp - easy to kill
+      var batHealthPoints = 5; // Bat starts with 5 hp - easy to kill
+      var currentMonster = null;
+      var monsterIsPresent = false;
+
+      // Function to generate a random monster with a 25% chance
+      function givesRandomMonster() {
+        setTimeout(function () {
+          if (Math.random() <= 0.25) {
+            var monsterTypes = ["Slime", "Bat"];
+            var randomMonsterType =
+              monsterTypes[Math.floor(Math.random() * monsterTypes.length)];
+            currentMonster = randomMonsterType;
+            showMonster();
+          }
+        }, 1500);
+      }
+      // ^ This function says that if the random math is 25% - you should showMonster.
+      // It also decides if its Slime or Bat that should appear. That is random!
+
+      function showMonster() {
+        if (currentMonster) {
+          appearingMonster.style.display = "block";
+          appearingMonster.src = `images/${currentMonster}.png`;
+          output.innerHTML += `A wild ${currentMonster} has appeared!<br>`;
+        } else {
+          appearingMonster.style.display = "none";
+          appearingMonster.src = "";
+        }
+      }
+      // ^ This function shows the picture of the chosen monster and then
+      // takes the picture away when its not supposed to be there
+    </script>
+  </body>
+</html>
